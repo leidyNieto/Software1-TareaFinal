@@ -1,0 +1,65 @@
+# Entorno virtual
+.venv/
+venv/
+
+# Variables de entorno
+.env
+.env.*
+
+# Archivos de configuración de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de log
+*.log
+
+# Base de datos local o SQLite
+*.sqlite3
+*.db
+
+# Archivos de configuración del IDE
+.vscode/
+.idea/
+
+# Archivos de Jupyter
+.ipynb_checkpoints
+
+# Distribuciones y paquetes
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Archivos temporales
+*.bak
+*.swp
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Coverage / testing
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+pytest_cache/
+nosetests.xml
+coverage.xml
+
+# MyPy y otros linter tools
+.mypy_cache/
+.pytype/
+.pytest_cache/
+
+# pipenv
+Pipfile.lock
+
+# Poetry
+poetry.lock
+
+# Otros entornos virtuales comunes
+env/
+ENV/
