@@ -67,7 +67,7 @@ while True:
             print("❌ Debe ingresar un número.")
             continue
         try:
-            fecha_gasto = datetime.strptime(input("Fecha del gasto (YYYY-MM-DD): "), "%Y-%m-%d").date()
+            fecha_gasto = datetime.strptime(input("Fecha del gasto (YYYY-MM-DD): "), "%Y-%m-%d").date()        
             valor = float(input("Valor del gasto: "))
             moneda = input("Moneda del gasto (ej: USD, COP): ").strip().upper()
             metodo_pago = seleccionar_enum(MetodoPago, "Seleccione el método de pago:")
