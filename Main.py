@@ -26,6 +26,7 @@ while True:
     print("\n=== Menú Principal ===")
     print("1. Crear nuevo viaje")
     print("2. Registrar gasto")
+    print("3. mostrar reportes")
     print("0. Salir")
     opcion = input("Seleccione una opción: ")
 
@@ -89,6 +90,50 @@ while True:
         except Exception as e:
             print(f"❌ Error al registrar el gasto: {e}")
             continue
+    elif opcion == "3":
+        print("\n=== Mostrar reportes ===")
+        print("1. Reporte por día (efectivo, tarjeta, total)")
+        print("2. Reporte por tipo de gasto (efectivo, tarjeta, total)")
+        subopcion = input("Seleccione el tipo de reporte: ")
+
+        viajes = repositorio.cargar_viajes()
+        if not viajes:
+            print("⚠️ No hay viajes registrados.")
+            continue
+
+        print("Seleccione un viaje:")
+        for i, v in enumerate(viajes, start=1):
+            print(f"{i}. {v.tipo_viaje.name} | {v.fecha_inicio} → {v.fecha_fin}")
+
+        try:
+            seleccion = int(input("Opción: "))
+            viaje = viajes[seleccion - 1]
+
+            if subopcion == "1":
+                reporte = controlador.generar_reporte(viaje, "fecha")
+                print("\n📅 Reporte diario:")
+                print("Fecha\t\tEFECTIVO\tTARJETA\t\tTOTAL")
+                for fecha, valores in reporte.items():
+                    efectivo = valores.get("EFECTIVO", 0)
+                    tarjeta = valores.get("TARJETA", 0)
+                    total = valores.get("TOTAL", 0)
+                    print(f"{fecha}\t{efectivo}\t\t{tarjeta}\t\t{total}")
+
+            elif subopcion == "2":
+                reporte = controlador.generar_reporte(viaje, "tipo")
+                print("\n🧾 Reporte por tipo de gasto:")
+                print("Tipo\t\tEFECTIVO\tTARJETA\t\tTOTAL")
+                for tipo, valores in reporte.items():
+                    efectivo = valores.get("EFECTIVO", 0)
+                    tarjeta = valores.get("TARJETA", 0)
+                    total = valores.get("TOTAL", 0)
+                    print(f"{tipo}\t{efectivo}\t\t{tarjeta}\t\t{total}")
+            else:
+                print("❌ Subopción no válida.")
+
+        except Exception as e:
+            print(f"❌ Error: {e}")
+
 
     elif opcion == "0":
         print("👋 Saliendo del programa...")

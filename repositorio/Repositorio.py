@@ -8,7 +8,14 @@ from modelos.Gastos import Gastos
 from modelos.Viaje import Viaje
 
 class Repositorio:
+    """
+    Clase encargada de manejar la conexión con la base de datos MySQL
+    y realizar operaciones de lectura y escritura relacionadas con viajes y gastos.
+    """
     def __init__(self):
+        """
+        Inicializa la configuración de la base de datos cargando las variables de entorno.
+        """
         load_dotenv()
         self.config = {
             'host': os.getenv("MYSQL_HOST"),
@@ -18,6 +25,12 @@ class Repositorio:
         }
 
     def cargar_viajes(self) -> List[Viaje]:
+        """
+        Obtiene todos los viajes registrados en la base de datos.
+
+        Returns:
+            List[Viaje]: Lista de objetos Viaje recuperados de la tabla `viajes`.
+        """
         viajes = []
         try:
             conexion = mysql.connector.connect(**self.config)
@@ -47,6 +60,13 @@ class Repositorio:
         return viajes
 
     def guardar_gasto(self, viaje: Viaje, gasto: Gastos):
+        """
+        Guarda un gasto asociado a un viaje en la base de datos.
+
+        Args:
+            viaje (Viaje): Objeto Viaje al que pertenece el gasto.
+            gasto (Gastos): Objeto Gastos que contiene los datos del gasto a guardar.
+        """
         try:
             conexion = mysql.connector.connect(**self.config)
             cursor = conexion.cursor()
@@ -76,6 +96,13 @@ class Repositorio:
                 conexion.close()
     
     def guardar_viaje(self, viaje: Viaje):
+        """
+        Guarda un nuevo viaje en la base de datos.
+        Args:
+            viaje (Viaje): Objeto Viaje que contiene los datos del viaje a guardar.
+        Nota:
+            El atributo `id` del objeto `viaje` será actualizado con el ID generado automáticamente por la base de datos.
+        """
         try:
             conexion = mysql.connector.connect(**self.config)
             cursor = conexion.cursor()
@@ -100,3 +127,44 @@ class Repositorio:
                 cursor.close()
             if 'conexion' in locals() and conexion.is_connected():
                 conexion.close()
+
+    def obtener_gastos_por_viaje(self, viaje: Viaje):
+        """
+        Recupera todos los gastos asociados a un viaje específico.
+        Args:
+            viaje (Viaje): Objeto Viaje del cual se quieren obtener los gastos.
+        Returns:
+            List[dict]: Lista de diccionarios con la información de cada gasto, ordenados por fecha.
+        """
+        gastos = []
+        try:
+            conexion = mysql.connector.connect(**self.config)
+            cursor = conexion.cursor()
+
+            query = """
+            SELECT fecha, valor_original, moneda, valor_convertido, tipo_pago, tipo_gasto
+            FROM gastos
+            WHERE viaje_id = %s
+            ORDER BY fecha
+            """
+            cursor.execute(query, (viaje.id,))
+
+            for row in cursor.fetchall():
+                gasto = {
+                    'fecha': row[0],
+                    'valor_original': float(row[1]),
+                    'moneda': row[2],
+                    'valor_peso': float(row[3]),
+                    'metodo_pago': row[4].upper(), 
+                    'tipo_gasto': row[5].upper()
+            }
+                gastos.append(gasto)
+
+        except mysql.connector.Error as err:
+            print(f"Error al obtener gastos: {err}")
+        finally:
+            if 'cursor' in locals():
+                cursor.close()
+            if 'conexion' in locals() and conexion.is_connected():
+                conexion.close()
+        return gastos

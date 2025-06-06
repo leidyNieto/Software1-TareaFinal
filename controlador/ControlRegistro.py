@@ -42,3 +42,15 @@ class ControlRegistro:
             "presupuesto_diario": viaje.presupuesto_diario,
             "diferencia": diferencia
         }
+    def generar_reporte(self, viaje: Viaje, tipo: str):
+        if not viaje.ya_termino():
+            raise ValueError("El viaje aún no ha terminado.")
+    
+        gastos = self.repositorio.obtener_gastos_por_viaje(viaje)
+
+        if tipo == "fecha":
+            return Gastos.agrupar_por_fecha(gastos)
+        elif tipo == "tipo":
+            return Gastos.agrupar_por_tipo(gastos)
+        else:
+            raise ValueError("Tipo de reporte no reconocido.")

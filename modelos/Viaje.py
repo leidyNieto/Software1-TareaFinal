@@ -79,15 +79,14 @@ class Viaje:
     
     def verificarviaje_activo(self,fecha:date) -> bool:
         """
-        Verifica si el viaje está activo comparando la fecha actual con las fechas de inicio y fin.
+        Verifica si el viaje está activo comparando la fecha  con las fechas de inicio y fin.
         """
         return self.fecha_inicio <= fecha <= self.fecha_fin
     
     def validar_tipo_viaje(self)-> bool:
-        """
-        Valida que el tipo de viaje sea uno de los tipos permitidos.
-        retorna true si el tipo de viaje es internacional 
-        """
         if not isinstance(self.tipo_viaje, TipoViaje):
             raise ValueError
         return self.tipo_viaje == TipoViaje.INTERNACIONAL
+    
+    def ya_termino(self) -> bool:
+        return date.today() > self.fecha_fin
